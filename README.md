@@ -48,7 +48,3 @@ A FastAPI-based service for managing peer-to-peer (P2P) cryptocurrency trading o
 - `GET /api/user/balance` - Get current balance
 - `GET /api/user/info` - Get account information
 - `GET /api/user/payments` - Get user payment methods
-
-## Usage Examples
-
-### Creating a P2P Advertisement
