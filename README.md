@@ -29,25 +29,25 @@ A FastAPI-based service for managing peer-to-peer (P2P) cryptocurrency trading o
 
 ### Advertisements
 
-- `POST /p2p/ads/create` - Create a new P2P advertisement
-- `GET /p2p/ads/list` - Get personal advertisement list
-- `GET /p2p/ads/online` - Get online advertisements
-- `POST /p2p/ads/offline` - Take an advertisement offline
-- `GET /p2p/ads/{ad_id}` - Get advertisement details
+- `POST /api/ads/create` - Create a new api advertisement
+- `GET /api/ads/list` - Get personal advertisement list
+- `GET /api/ads/online` - Get online advertisements
+- `POST /api/ads/offline` - Take an advertisement offline
+- `GET /api/ads/{ad_id}` - Get advertisement details
 
 ### Orders
 
-- `GET /p2p/orders` - Get P2P orders with filters
-- `GET /p2p/orders/pending` - Get pending orders
-- `GET /p2p/orders/{order_id}` - Get order details
-- `POST /p2p/orders/{order_id}/pay` - Mark order as paid
-- `POST /p2p/orders/{order_id}/release` - Release digital assets
+- `GET /api/orders` - Get api orders with filters
+- `GET /api/orders/pending` - Get pending orders
+- `GET /api/orders/{order_id}` - Get order details
+- `POST /api/orders/{order_id}/pay` - Mark order as paid
+- `POST /api/orders/{order_id}/release` - Release digital assets
 
 ### User
 
-- `GET /p2p/user/balance` - Get current balance
-- `GET /p2p/user/info` - Get account information
-- `GET /p2p/user/payments` - Get user payment methods
+- `GET /api/user/balance` - Get current balance
+- `GET /api/user/info` - Get account information
+- `GET /api/user/payments` - Get user payment methods
 
 ## Usage Examples
 
