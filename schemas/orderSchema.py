@@ -45,6 +45,9 @@ class Extension(BaseModel):
     startTime: str = Field(description="delay start time")
     
 class OtcOrderInfo(BaseModel):
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
     id: str = Field(description="order id")
     side: int = Field(description="Order trade type. 0: BUY, 1: SELL")
     itemId: str = Field(description="adv id")
@@ -153,6 +156,15 @@ class OrderExtension(BaseModel):
     startTime: str = Field(
         description="delay start time"
     )
+    
+class OrderSearchParams(BaseModel): 
+    page: int
+    size: int
+    status: Optional[OrderStatus] = None
+    begin_time: Optional[str] = None
+    end_time: Optional[str] = None
+    token_id: Optional[str] = None
+    side: Optional[int] = None
 
 class OrderItem(BaseModel):
     """Individual order item"""

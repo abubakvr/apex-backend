@@ -7,3 +7,18 @@ Content-Type: application/json
     "price": 29.99,
     "tax": 2.50
 }
+
+###
+POST http://localhost:8000/api/orders
+Content-Type: application/json
+
+{
+    "page": 1,
+    "size": 10,
+    "status": 20,
+    "side": 0
+}
+
+### 
+GET http://localhost:8000/api/orders/1878475021813268480
+

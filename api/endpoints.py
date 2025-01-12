@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends
 from core import services
-from api.schemas import Item, ItemCreate, P2PAdCreate, Side
-from schemas import orderSchema, userSchema
-from typing import List, Optional
+from api.schemas import Item, ItemCreate, Side
+from schemas import orderSchema, userSchema, adsSchema
 
 router = APIRouter(prefix="/api")
 
@@ -29,7 +28,7 @@ async def get_ad_detail(ad_id: str):
     return await services.get_ad_detail(ad_id)
 
 @router.post("/ads/create")
-async def create_ad(ad_data: P2PAdCreate):
+async def create_ad(ad_data: adsSchema.P2PAdCreate):
     """Create a new P2P advertisement"""
     return await services.create_p2p_ad(**ad_data.model_dump())
 
@@ -49,25 +48,19 @@ async def get_online_advertisements(
     """Get list of online P2P advertisements"""
     return await services.get_online_ads(token_id, currency_id, side, page, size)
 
-@router.get("/orders", response_model=List[orderSchema.OrderListResponse])
+@router.post("/orders")
 async def get_orders_list(
-    page: int,
-    size: int,
-    status: Optional[orderSchema.OrderStatus] = None,
-    begin_time: Optional[str] = None,
-    end_time: Optional[str] = None,
-    token_id: Optional[str] = None,
-    sides: Optional[List[int]] = None
+    params: orderSchema.OrderSearchParams
 ):
     """Get filtered list of P2P orders"""
-    return await services.get_orders(page, size, status, begin_time, end_time, token_id, sides)
+    return await services.get_orders(params)
 
-@router.get("/orders/pending", response_model=List[orderSchema.OrderListResponse])
+@router.get("/orders/pending")
 async def get_pending_orders_list():
     """Get list of pending P2P orders"""
     return await services.get_pending_orders()
 
-@router.get("/orders/{order_id}", response_model=orderSchema.OtcOrderInfo)
+@router.get("/orders/{order_id}")
 async def get_order_details(order_id: str):
     """Get detailed information for a specific order"""
     return await services.get_order_details(order_id)
@@ -91,7 +84,7 @@ async def release_asset(order_id: str):
     """Release digital assets for a P2P order"""
     return await services.release_digital_asset(order_id)
 
-@router.get("/payments", response_model=userSchema.PaymentMethod)
+@router.get("/payments")
 async def get_payment_methods():
     """Get list of user's payment methods"""
     return await services.get_user_payments()

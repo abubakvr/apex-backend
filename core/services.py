@@ -1,6 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from fastapi import Depends
-from api.schemas import Item, ItemCreate, OrderStatus, Side, PriceType, ItemType
+from api.schemas import Item, ItemCreate, Side, PriceType, ItemType
+from schemas import orderSchema
 from database.database import get_db
 from core.bybitClient import HTTP_Request
 from typing import List, Optional
@@ -63,13 +64,7 @@ async def offline_ads(item_id: str):
     return HTTP_Request(endpoint, method, params, "Offline Ads")
 
 async def get_orders(
-    page: int,
-    size: int,
-    status: Optional[OrderStatus] = None,
-    begin_time: Optional[str] = None,
-    end_time: Optional[str] = None,
-    token_id: Optional[str] = None,
-    sides: Optional[List[int]] = None
+    params: orderSchema.OrderSearchParams
 ):
     """
     Get P2P orders with optional filters
@@ -84,28 +79,8 @@ async def get_orders(
     """
     endpoint = "/v5/p2p/order/simplifyList"
     method = "POST"
-    
-    # Build parameters dictionary with required fields
-    params_dict = {
-        "page": page,
-        "size": size
-    }
-    
-    # Add optional parameters if they are provided
-    if status is not None:
-        params_dict["status"] = int(status)
-    if begin_time:
-        params_dict["beginTime"] = begin_time
-    if end_time:
-        params_dict["endTime"] = end_time
-    if token_id:
-        params_dict["tokenId"] = token_id
-    if sides:
-        params_dict["side"] = sides
-    
-    # Convert dictionary to JSON string
-    params = json.dumps(params_dict)
-    return HTTP_Request(endpoint, method, params, "Get Orders")
+    formatted_params = json.dumps(params.model_dump())
+    return HTTP_Request(endpoint, method, formatted_params, "Get Orders")
     
 async def get_pending_orders():
     """
@@ -269,4 +244,5 @@ async def get_user_payments():
     endpoint = "/v5/p2p/user/payment/list"
     method = "POST"
     params = ''  # Empty string as no parameters are required
-    return HTTP_Request(endpoint, method, params, "Get User Payments")
+    response =  HTTP_Request(endpoint, method, params, "Get User Payments")
+    return response
