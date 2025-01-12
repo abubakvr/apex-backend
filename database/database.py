@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from config import settings  # Assuming settings.py contains your MongoDB connection string
+from config.settings import settings  # Assuming settings.py contains your MongoDB connection string
 
 client = None
 db = None
@@ -7,7 +7,6 @@ async def connect_to_mongodb():
     global client
     try:
         client = AsyncIOMotorClient(settings.MONGODB_URI)
-        db = client.bybitdb
         print("Connected to MongoDB")
         # Optionally test the connection:
         await client.admin.command('ping')
@@ -23,4 +22,7 @@ async def close_mongodb_connection():
         print("Closed MongoDB connection")
         
 async def get_db() -> AsyncIOMotorDatabase:
+    global client
+    client = AsyncIOMotorClient(settings.MONGODB_URI)
+    db = client.bybitdb
     return db
