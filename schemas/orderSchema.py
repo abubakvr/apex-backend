@@ -1,18 +1,6 @@
 from pydantic import BaseModel, Field
 from enum import IntEnum, Enum
-from typing import List, Optional, Dict
-
-class Item(BaseModel):
-    name: str
-    description: str | None = None
-    price: float
-    tax: float | None = None
-
-class ItemCreate(BaseModel):
-    name: str
-    description: str | None = None
-    price: float
-    tax: float | None = None
+from typing import List, Optional
     
 class OrderStatus(IntEnum):
     WAITING_FOR_CHAIN = 5
@@ -32,14 +20,6 @@ class Side(str, Enum):
     BUY = "0"
     SELL = "1"
 
-class PriceType(str, Enum):
-    FIXED = "0"
-    FLOATING = "1"
-
-class ItemType(str, Enum):
-    ORIGIN = "ORIGIN"
-    BULK = "BULK"
-    
 class OrderType(str):
     ORIGIN = "ORIGIN"
     SMALL_COIN = "SMALL_COIN"
@@ -48,22 +28,7 @@ class OrderType(str):
 class UserType(str):
     PERSONAL = "PERSONAL"
     ORG = "ORG"
-    
-class P2PAdCreate(BaseModel):
-    token_id: str
-    currency_id: str
-    side: Side
-    price_type: PriceType
-    premium: str
-    price: str
-    min_amount: str
-    max_amount: str
-    remark: str
-    trading_preference_set: Dict
-    payment_ids: List[str]
-    quantity: str
-    payment_period: str
-    item_type: ItemType = ItemType.ORIGIN
+
     
 class OtcPaymentTerm(BaseModel):
     id: str = Field(description="payment id")
@@ -156,56 +121,60 @@ class OrderListResponse(BaseModel):
     count: int = Field(description="order total num")
     items: List[OrderItem] = Field(description="list of orders")
     
-class UserProfile(BaseModel):
-    nickName: str = Field(description="User's nickname")
-    defaultNickName: bool = Field(
-        description="Whether the user's nickname is system-generated. true: system-generated, false: user-set"
+class OrderStatus(IntEnum):
+    """Order status enumeration"""
+    WAITING_FOR_CHAIN = 5        # waiting for chain (only web3)
+    WAITING_FOR_BUY_PAY = 10     # waiting for buy pay
+    WAITING_FOR_SELLER_RELEASE = 20  # waiting for seller release
+    APPEALING = 30               # Appealing
+    CANCEL_ORDER = 40            # cancel order
+    FINISH_ORDER = 50            # finish order
+    PAYING = 60                  # paying (only pay online)
+    PAY_FAIL = 70               # pay fail (only pay online)
+    EXCEPTION_CANCELED = 80      # exception canceled (coin converted to other coin)
+    WAITING_BUYER_SELECT_TOKEN = 90  # waiting buyer select tokenId
+    OBJECTING = 100             # objectioning
+    WAITING_FOR_OBJECTION = 110  # Waiting for the user to raise an objection
+
+class OrderType(str, Enum):
+    """Order type enumeration"""
+    ORIGIN = "ORIGIN"           # Normal p2p order
+    SMALL_COIN = "SMALL_COIN"   # HotSwap p2p order
+    WEB3 = "WEB3"              # web3 p2p order
+
+class OrderExtension(BaseModel):
+    """Order extension information"""
+    isDelayWithdraw: bool = Field(
+        description="Delayed withdrawal (true: delay)"
     )
-    isOnline: bool = Field(
-        description="Whether the user is online on the bybit site. true: online, false: offline"
+    delayTime: str = Field(
+        description="delay time"
     )
-    kycLevel: str = Field(description="KYC level")
-    email: str = Field(description="Email address (masked)")
-    mobile: str = Field(description="Mobile phone number (masked)")
-    lastLogoutTime: str = Field(description="Last logout time from bybit platform")
-    recentRate: str = Field(description="Completion rate in the past 30 days")
-    totalFinishCount: int = Field(description="Total number of completed orders")
-    totalFinishSellCount: int = Field(
-        description="Total number of completed orders - sell token"
+    startTime: str = Field(
+        description="delay start time"
     )
-    totalFinishBuyCount: int = Field(
-        description="Total number of completed orders - buy token"
-    )
-    recentFinishCount: int = Field(description="Order quantity within 30 days")
-    averageReleaseTime: str = Field(
-        description="Average release token time in minutes"
-    )
-    averageTransferTime: str = Field(
-        description="Average payment currency time in minutes"
-    )
-    accountCreateDays: int = Field(description="Days since the account was created")
-    firstTradeDays: int = Field(
-        description="Days from first transaction to today"
-    )
-    realName: str = Field(description="Real name")
-    recentTradeAmount: str = Field(
-        description="Cumulative successful transaction amount USDT in the past 30 days"
-    )
-    totalTradeAmount: str = Field(
-        description="The sum of all USDT transaction volumes in the past for the account"
-    )
-    registerTime: str = Field(description="User's registration time")
-    authStatus: int = Field(
-        description="VA status: 1 - VA, 2 - Not VA"
-    )
-    kycCountryCode: str = Field(description="User's KYC country code")
-    blocked: str = Field(description="User's banned status")
-    goodAppraiseRate: str = Field(description="Positive rating")
-    goodAppraiseCount: int = Field(description="Number of positive comments")
-    badAppraiseCount: int = Field(description="Number of negative comments")
-    vipLevel: int = Field(description="VIP level")
-    userId: str = Field(description="UserId")
-    realNameEn: Optional[str] = Field(
-        description="KYC in English",
-        default=None
-    )
+
+class OrderItem(BaseModel):
+    """Individual order item"""
+    id: str = Field(description="order Id")
+    side: int = Field(description="Order trade type. 0: BUY, 1: SELL")
+    tokenId: str = Field(description="tokenId")
+    orderType: OrderType = Field(description="order type")
+    amount: str = Field(description="seller/buyer trade amount")
+    currencyId: str = Field(description="currency_id")
+    price: str = Field(description="order price")
+    fee: str = Field(description="fee")
+    targetNickName: str = Field(description="Counterparty nickname")
+    targetUserId: str = Field(description="Counterparty uid")
+    status: OrderStatus = Field(description="order status")
+    createDate: str = Field(description="order create time")
+    transferLastSeconds: str = Field(description="The buyer's remaining transfer time")
+    userId: str = Field(description="The uid of the current query user")
+    sellerRealName: str = Field(description="seller realname")
+    buyerRealName: str = Field(description="buyer realname")
+    extension: OrderExtension = Field(description="Order extension information")
+
+class OrderListResponse(BaseModel):
+    """Response model for order list"""
+    count: int = Field(description="order total num")
+    items: List[OrderItem] = Field(description="list of orders")

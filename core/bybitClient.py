@@ -2,7 +2,6 @@ import requests
 import time
 import hashlib
 import hmac
-import uuid
 import json
 from config.settings import settings
 
@@ -44,22 +43,3 @@ def genSignature(payload):
     hash = hmac.new(bytes(secret_key, "utf-8"), param_str.encode("utf-8"),hashlib.sha256)
     signature = hash.hexdigest()
     return signature
-
-# #Create Order
-# endpoint="/v5/order/create"
-# method="POST"
-# orderLinkId=uuid.uuid4().hex
-# params='{"category":"linear","symbol": "BTCUSDT","side": "Buy","positionIdx": 0,"orderType": "Limit","qty": "0.001","price": "10000","timeInForce": "GTC","orderLinkId": "' + orderLinkId + '"}'
-# HTTP_Request(endpoint,method,params,"Create")
-
-#Get unfilled Orders
-endpoint="/v5/p2p/user/payment/list"
-method="POST"
-params=''
-HTTP_Request(endpoint,method,params,"UnFilled")
-
-# #Cancel Order
-# endpoint="/v5/order/cancel"
-# method="POST"
-# params='{"category":"linear","symbol": "BTCUSDT","orderLinkId": "'+orderLinkId+'"}'
-# HTTP_Request(endpoint,method,params,"Cancel")

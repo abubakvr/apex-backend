@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from config.settings import settings  # Assuming settings.py contains your MongoDB connection string
+from config.settings import settings  
 
 client = None
 db = None
