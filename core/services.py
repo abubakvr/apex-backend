@@ -4,7 +4,7 @@ from api.schemas import Item, ItemCreate, Side, PriceType, ItemType
 from schemas import orderSchema
 from database.database import get_db
 from core.bybitClient import HTTP_Request
-from typing import List, Optional
+from typing import List
 import json
 
 async def get_items():
@@ -33,16 +33,16 @@ async def create_item(
     return Item(**created_item)
 
 async def get_current_balance():
-    endpoint="/v5/p2p/user/personal/info"
-    method="POST"
+    endpoint="/v5/asset/transfer/query-account-coins-balance?accountType=FUND&coin=USDT"
+    method="GET"
     params=''
-    HTTP_Request(endpoint,method,params,"User Info")
+    return HTTP_Request(endpoint,method,params,"User Balance")
     
 async def get_account_info():
     endpoint="/v5/p2p/user/personal/info"
     method="POST"
     params=''
-    response = HTTP_Request(endpoint, method, params, "User Balance")  # Capture the return value
+    response = HTTP_Request(endpoint, method, params, "User Info")  # Capture the return value
     return response 
     
 async def get_ads_list():
@@ -101,9 +101,12 @@ async def get_user_order_stats(original_uid: str, order_id: str):
     endpoint = "/v5/p2p/user/order/personal/info"
     method = "POST"
     params = json.dumps({
-        "originalUid": original_uid,
-        "orderId": order_id
+        "originalUid": str(original_uid),
+        "orderId": str(order_id)
     })
+    
+    print(original_uid)
+    
     return HTTP_Request(endpoint, method, params, "Get User Order Stats")
     
 async def get_order_details(order_id: str):

@@ -17,6 +17,10 @@ async def create_item_endpoint(item: ItemCreate = Depends(services.create_item))
 async def read_account_info():
     return await services.get_account_info()
 
+@router.get("/balance")  # New endpoint
+async def read_account_balance():
+    return await services.get_current_balance()
+
 @router.get("/ads/my")
 async def list_my_ads():
     """Get list of personal P2P advertisements"""
@@ -74,7 +78,7 @@ async def mark_paid(
     """Mark a P2P order as paid"""
     return await services.mark_order_as_paid(order_id, payment_type, payment_id)
 
-@router.get("/orders/{order_id}/stats", response_model=userSchema.UserProfile)
+@router.get("/orders/{order_id}/stats")
 async def get_order_stats(order_id: str, original_uid: str):
     """Get statistics for a specific order"""
     return await services.get_user_order_stats(original_uid, order_id)
