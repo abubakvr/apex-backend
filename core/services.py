@@ -135,7 +135,7 @@ async def release_digital_asset(order_id: str):
     })
     return HTTP_Request(endpoint, method, params, "Release Digital Asset")
     
-async def mark_order_as_paid(order_id: str, payment_type: str, payment_id: str):
+async def mark_order_as_paid(params: orderSchema.OrderPaymentInfo):
     """
     Mark a P2P order as paid
     Args:
@@ -145,11 +145,7 @@ async def mark_order_as_paid(order_id: str, payment_type: str, payment_id: str):
     """
     endpoint = "/v5/p2p/order/pay"
     method = "POST"
-    params = json.dumps({
-        "orderId": order_id,
-        "paymentType": payment_type,
-        "paymentId": payment_id
-    })
+    params = json.dumps(params.model_dump())
     return HTTP_Request(endpoint, method, params, "Mark Order As Paid")
     
 async def create_p2p_ad(

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from core import services
 from api.schemas import Item, ItemCreate, Side
-from schemas import orderSchema, userSchema, adsSchema
+from schemas import orderSchema, adsSchema
 
 router = APIRouter(prefix="/api")
 
@@ -69,14 +69,12 @@ async def get_order_details(order_id: str):
     """Get detailed information for a specific order"""
     return await services.get_order_details(order_id)
 
-@router.post("/orders/{order_id}/pay")
+@router.post("/orders/pay")
 async def mark_paid(
-    order_id: str,
-    payment_type: str,
-    payment_id: str
+    params: orderSchema.OrderPaymentInfo
 ):
     """Mark a P2P order as paid"""
-    return await services.mark_order_as_paid(order_id, payment_type, payment_id)
+    return await services.mark_order_as_paid(params)
 
 @router.get("/orders/{order_id}/stats")
 async def get_order_stats(order_id: str, original_uid: str):

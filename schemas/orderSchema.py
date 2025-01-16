@@ -190,3 +190,8 @@ class OrderListResponse(BaseModel):
     """Response model for order list"""
     count: int = Field(description="order total num")
     items: List[OrderItem] = Field(description="list of orders")
+    
+class OrderPaymentInfo(BaseModel):
+    orderId: str = Field(description="order id")
+    paymentType: str = Field(description="Payment method used; get from order detail interface")
+    paymentId: str = Field(description="Payment method id used; get from order detail interface")
