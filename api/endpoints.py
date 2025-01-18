@@ -81,9 +81,12 @@ async def get_order_stats(order_id: str, original_uid: str):
     """Get statistics for a specific order"""
     return await services.get_user_order_stats(original_uid, order_id)
 
-@router.post("/orders/{order_id}/release")
-async def release_asset(order_id: str):
+@router.post("/orders/release")
+async def release_asset(param: dict):
     """Release digital assets for a P2P order"""
+    order_id = param.get("orderId")
+    if not order_id:
+        raise ValueError("orderId is required")
     return await services.release_digital_asset(order_id)
 
 @router.get("/payments")
